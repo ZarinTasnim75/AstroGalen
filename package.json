@@ -2,11 +2,11 @@
   "name": "orbit-health-companion",
   "version": "1.0.0",
   "private": true,
-  "description": "ORBIT — Astronaut Health & Wellness Companion (NASA Space Apps Challenge 2026)",
+  "description": "ORBIT \u2014 Astronaut Health & Wellness Companion (NASA Space Apps Challenge 2026)",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node init && next dev",
+    "build": "node init && next build",
+    "start": "node init && next start",
     "test": "tsx --test src/tests/*.test.ts",
     "icons": "node scripts/gen-icons.mjs"
   },

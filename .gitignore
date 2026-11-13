@@ -22,7 +22,6 @@ yarn-error.log*
 
 # Local env files
 .env*.local
-.env
 
 # Vercel
 .vercel
@@ -34,3 +33,4 @@ next-env.d.ts
 # Testing
 /.nyc_output
 node_modules
+config.bat

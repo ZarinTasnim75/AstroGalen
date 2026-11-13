@@ -39,7 +39,11 @@ type MouthExpression = 'smile' | 'open-smile' | 'wave' | 'neutral';
 function useOrbiWander(enabled: boolean): { left: string; bottom: string } | null {
   const [pos, setPos] = React.useState<{ left: string; bottom: string } | null>(null);
   React.useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      // Parked: null → the dock falls back to its home spot (bottom-right corner).
+      setPos(null);
+      return;
+    }
     // Start at the classic bottom-right corner, then glide around.
     setPos({ left: 'calc(100vw - 5rem)', bottom: '1rem' });
     let alive = true;
