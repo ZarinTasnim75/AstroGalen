@@ -36,10 +36,14 @@ export function OfflineStatus({ className }: { className?: string }) {
   }, []);
 
   return (
-    <Badge tone={online ? 'green' : 'amber'} className={cn('whitespace-nowrap', className)} title={online ? 'Connected — all data is still stored locally' : 'Offline — everything keeps working from local storage'}>
+    <Badge
+      tone={online ? 'green' : 'amber'}
+      className={cn('h-9 shrink-0 whitespace-nowrap rounded-lg px-2.5', className)}
+      title={online ? 'Connected — all data is still stored locally' : 'Offline — everything keeps working from local storage'}
+    >
       {online ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
       {online ? 'Online' : 'Offline'}
-      <span className="hidden lg:inline items-center gap-1 text-orbit-muted">
+      <span className="hidden lg:inline-flex shrink-0 items-center gap-1 text-orbit-muted">
         · <Database className="h-3 w-3" /> Local
       </span>
     </Badge>
