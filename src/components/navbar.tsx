@@ -14,11 +14,11 @@ const LINKS = [
   { href: '/assessments', label: 'Assessments', icon: ClipboardList },
   { href: '/body', label: 'Body Explorer', icon: PersonStanding },
   { href: '/insights', label: 'Insights', icon: LineChart },
-  { href: '/medical-tests', label: 'Medical Tests', icon: Stethoscope },
   { href: '/assistant', label: 'AI Assistant', icon: MessagesSquare },
 ];
 
 const MORE = [
+  { href: '/medical-tests', label: 'Medical Tests', icon: Stethoscope },
   { href: '/report', label: 'Medical Report', icon: FileText },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
@@ -49,7 +49,7 @@ export function Navbar() {
               href={href}
               aria-current={pathname === href ? 'page' : undefined}
               className={cn(
-                'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors',
                 pathname === href ? 'bg-orbit-cyan/15 text-orbit-cyan' : 'text-orbit-muted hover:text-orbit-text hover:bg-orbit-cyan/5',
               )}
             >
@@ -99,6 +99,9 @@ export function Navbar() {
               <Icon className="h-5 w-5" />
             </Link>
           ))}
+          <Link href="/medical-tests" aria-label="Medical Tests" className={cn('p-2 rounded-lg', pathname === '/medical-tests' ? 'bg-orbit-cyan/15 text-orbit-cyan' : 'text-orbit-muted')}>
+            <Stethoscope className="h-5 w-5" />
+          </Link>
           <Link href="/report" aria-label="Medical Report" className="p-2 rounded-lg text-orbit-muted">
             <FileText className="h-5 w-5" />
           </Link>

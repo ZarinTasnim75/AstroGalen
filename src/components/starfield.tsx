@@ -36,7 +36,9 @@ export function Starfield() {
   React.useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // The app animates regardless of the OS reduced-motion preference (product
+    // decision by the owner, who explicitly asked for visible motion).
+    const reduced = false;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -300,7 +302,6 @@ function JourneyMoon({ phase }: { phase: Phase }) {
 function PassingSatellite() {
   const [visible, setVisible] = React.useState(false);
   React.useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let alive = true;
     const loop = () => {
       if (!alive) return;

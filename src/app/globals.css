@@ -138,10 +138,11 @@ body {
 
 /* ORBI idle float + blinking eyes + speech bubble tail. */
 @keyframes orbi-idle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+  35% { transform: translateY(-7px) translateX(2px) rotate(1.6deg); }
+  70% { transform: translateY(-3px) translateX(-2px) rotate(-1.2deg); }
 }
-.orbi-idle-float { animation: orbi-idle 3.6s ease-in-out infinite; transform-origin: bottom right; }
+.orbi-idle-float { animation: orbi-idle 5.2s ease-in-out infinite; transform-origin: bottom right; }
 
 @keyframes orbi-blink {
   0%, 92%, 100% { transform: scaleY(1); }
@@ -172,14 +173,6 @@ body {
   filter: blur(0.5px);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .fade-up { animation: none; }
-  .organ[data-selected='true'] { animation: none; }
-  .cover-screen { animation: none; }
-  .cover-screen.cover-out { animation: none; visibility: hidden; }
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+/* Note: this app intentionally animates regardless of the OS reduced-motion
+   setting (product decision by the owner, who asked for visible motion).
+   Motion-aware logic lives in the components, not here. */
