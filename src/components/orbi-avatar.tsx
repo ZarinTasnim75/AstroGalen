@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { toast } from 'sonner';
+import { Rocket } from 'lucide-react';
 import { useJourneyContext } from '@/components/journey-provider';
 import { journeyScale } from '@/lib/journey';
 import { Progress } from './ui/card';
@@ -30,6 +31,37 @@ const ARRIVED_MESSAGES = [
 ];
 
 type MouthExpression = 'smile' | 'open-smile' | 'wave' | 'neutral';
+
+/**
+ * ORBI wanders the screen: every ~18 s the dock glides to a new spot
+ * (CSS transition on left/bottom, so the move itself is animated travel).
+ */
+function useOrbiWander(enabled: boolean): { left: string; bottom: string } | null {
+  const [pos, setPos] = React.useState<{ left: string; bottom: string } | null>(null);
+  React.useEffect(() => {
+    if (!enabled) return;
+    // Start at the classic bottom-right corner, then glide around.
+    setPos({ left: 'calc(100vw - 5rem)', bottom: '1rem' });
+    let alive = true;
+    let timer: ReturnType<typeof setTimeout>;
+    const glide = (delay: number) => {
+      timer = setTimeout(() => {
+        if (!alive) return;
+        setPos({
+          left: `${6 + Math.random() * 70}vw`,
+          bottom: `${8 + Math.random() * 44}vh`,
+        });
+        glide(13000 + Math.random() * 9000);
+      }, delay);
+    };
+    glide(7000);
+    return () => {
+      alive = false;
+      clearTimeout(timer);
+    };
+  }, [enabled]);
+  return pos;
+}
 
 export function OrbiAvatar() {
   const journey = useJourneyContext();
@@ -84,52 +116,37 @@ export function OrbiAvatar() {
   const messages = arrived ? ARRIVED_MESSAGES : BUBBLE_MESSAGES;
   const expression: MouthExpression = celebrating ? 'open-smile' : completed >= 1 ? 'wave' : 'smile';
 
-  if (arrived && !open && !celebrating) {
-    // ORBI stays at the Moon; keep a compact floating chip so the avatar is
-    // always reachable but does not cover content.
-    return (
-      <>
-        {flying && <FlightOverlay onDone={onFlightDone} />}
-        {!flying && (
-          <div className="fixed right-4 bottom-4 z-40 flex flex-col items-end print:hidden">
-            <button
-              onClick={() => setOpen(true)}
-              aria-label="Open ORBI companion status"
-              className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orbit-cyan"
-            >
-              <div className="orbi-idle-float" style={{ transform: `scale(${scale})`, transformOrigin: 'bottom right' }}>
-                <OrbiFigure size={64} expression={expression} arrived />
-              </div>
-            </button>
-          </div>
-        )}
-        <OrbiStatus
-          open={open}
-          onClose={() => setOpen(false)}
-          completed={completed}
-          arrived
-          onReplay={() => {
-            setOpen(false);
-            setFlying(true);
-          }}
-        />
-        <CelebrationOverlay celebrating={celebrating} onContinue={continueMission} />
-      </>
-    );
-  }
+  const startFlight = () => {
+    setOpen(false);
+    setFlying(true);
+  };
+  const wander = useOrbiWander(!flying && !celebrating);
+  const dockStyle: React.CSSProperties = wander
+    ? { left: wander.left, bottom: wander.bottom, transition: 'left 5s ease-in-out, bottom 5s ease-in-out' }
+    : { right: 16, bottom: 16 };
 
   return (
     <>
       {/* Flight overlay: Earth → Moon along a curved path */}
       {flying && <FlightOverlay onDone={onFlightDone} />}
 
-      {/* Idle avatar in the corner with speech bubble */}
+      {/* Wandering ORBI dock: speech bubble + flight button + avatar */}
       {!flying && (
-        <div className="fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2 print:hidden">
+        <div className="fixed z-40 flex flex-col items-end gap-2 print:hidden" style={dockStyle}>
           {showBubble && (
             <div className="panel px-3.5 py-2 max-w-60 neon-ring relative speech-bubble" role="status" aria-live="polite">
               <p className="text-xs font-medium leading-snug">{messages[bubbleIdx % messages.length]}</p>
             </div>
+          )}
+          {!open && (
+            <button
+              onClick={startFlight}
+              className="panel flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold text-orbit-cyan neon-ring hover:bg-orbit-cyan/10 transition-colors"
+              aria-label="Watch ORBI fly from Earth to the Moon"
+            >
+              <Rocket className="h-3 w-3" />
+              Watch the flight
+            </button>
           )}
           <button
             onClick={() => setOpen((o) => !o)}
@@ -138,14 +155,20 @@ export function OrbiAvatar() {
             className="relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orbit-cyan"
           >
             <div className="orbi-idle-float" style={{ transform: `scale(${scale})`, transformOrigin: 'bottom right' }}>
-              <OrbiFigure size={64} expression={expression} />
+              <OrbiFigure size={64} expression={expression} arrived={arrived} />
             </div>
             <span className="absolute -top-1 -left-8 text-[10px] font-semibold text-orbit-cyan select-none">ORBI</span>
           </button>
         </div>
       )}
 
-      <OrbiStatus open={open} onClose={() => setOpen(false)} completed={completed} arrived={arrived || celebrating} />
+      <OrbiStatus
+        open={open}
+        onClose={() => setOpen(false)}
+        completed={completed}
+        arrived={arrived || celebrating}
+        onReplay={startFlight}
+      />
       <CelebrationOverlay celebrating={celebrating} onContinue={continueMission} />
     </>
   );
@@ -167,10 +190,10 @@ function FlightOverlay({ onDone }: { onDone: () => void }) {
         onAnimationEnd={onDone}
       >
         <div className="relative">
-          <div className="orbi-trail right-full top-1/2 w-32" />
-          <div className="orbi-trail right-full top-1/2 w-24 opacity-70 translate-y-2" />
-          <div style={{ transform: 'scale(1.35)', transformOrigin: 'center' }}>
-            <OrbiFigure size={72} expression="wave" flying />
+          <div className="orbi-trail right-full top-1/2 w-44" />
+          <div className="orbi-trail right-full top-1/2 w-28 opacity-70 translate-y-2" />
+          <div style={{ transform: 'scale(1.25)', transformOrigin: 'center' }}>
+            <OrbiFigure size={96} expression="wave" flying />
           </div>
         </div>
       </div>
@@ -206,7 +229,7 @@ function OrbiStatus({
         Completing today’s <strong>Physical</strong> and <strong>Mental</strong> assessments launches ORBI to the Moon.
         Rewards are earned for completing and honestly reporting assessments — never for specific health values.
       </p>
-      {arrived && onReplay && (
+      {onReplay && (
         <Button variant="outline" size="sm" className="mt-3 w-full" onClick={onReplay}>
           Watch the flight again
         </Button>
@@ -259,7 +282,7 @@ export function OrbiFigure({
   flying?: boolean;
   flag?: boolean;
 }) {
-  const glow = arrived ? 0.85 : 0.45;
+  const glow = arrived ? 0.85 : flying ? 0.15 : 0.45;
   return (
     <svg width={size} height={size * 1.25} viewBox="0 0 64 80" role="img" aria-label={arrived ? 'ORBI the astronaut celebrating on the Moon' : 'ORBI the astronaut'}>
       <defs>

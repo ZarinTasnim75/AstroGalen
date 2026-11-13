@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Navbar />
               <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-6 pb-28">{children}</main>
               <footer className="mx-auto w-full max-w-7xl px-4 pb-8 text-center text-xs text-orbit-muted">
-                AstroGalen · NASA Space Apps Challenge 2026 · Health awareness software — not a medical diagnostic system
+                AstroGalen · Health awareness software — not a medical diagnostic system
               </footer>
             </div>
             <OrbiAvatar />

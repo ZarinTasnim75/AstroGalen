@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import {
-  Rocket, ClipboardList, PersonStanding, LineChart, Stethoscope, MessagesSquare,
+  ClipboardList, PersonStanding, LineChart, Stethoscope, MessagesSquare,
   Activity, HeartPulse, Droplets, Moon, Footprints, Thermometer, Gauge, Radiation, Wind,
   ArrowLeftRight, Sun, Cloud, ShieldAlert, RefreshCw, Wifi, WifiOff, CircleCheck, CircleDashed,
 } from 'lucide-react';
@@ -122,7 +122,6 @@ export function DashboardOverview() {
       {/* ---- Mission overview strip ---- */}
       <section className="pt-4">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <Badge tone="cyan"><Rocket className="h-3 w-3" /> NASA Space Apps Challenge 2026</Badge>
           {settings.demoMode && <Badge tone="amber">Demo mode — fictional data</Badge>}
           {!online && <Badge tone="amber"><WifiOff className="h-3 w-3" /> Offline — full functionality available</Badge>}
           {online && <Badge tone="green"><Wifi className="h-3 w-3" /> Connected</Badge>}

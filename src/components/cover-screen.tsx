@@ -97,9 +97,6 @@ export function CoverScreen() {
               </svg>
             </div>
 
-            <p className="text-xs font-semibold tracking-[0.35em] text-orbit-muted uppercase mb-3">
-              NASA Space Apps Challenge 2026
-            </p>
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-orbit-cyan via-orbit-blue to-orbit-violet bg-clip-text text-transparent">
               ASTROGALEN
             </h1>
